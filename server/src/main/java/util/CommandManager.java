@@ -5,6 +5,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public interface CommandManager {
-    List<String> getCommands() throws IOException;
+    List<String> getCommands();
 
 }

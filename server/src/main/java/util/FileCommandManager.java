@@ -16,7 +16,7 @@ public class FileCommandManager implements CommandManager {
      * @throws IOException if the commands file cannot be read or if the named file does not
      *                     exist, is a directory rather than a regular file, or for some other reason cannot be opened for reading.
      */
-    public FileCommandManager(String commandFile) throws IOException {
+    public FileCommandManager(String commandFile) {
         COMMAND_FILE = commandFile;
         commands = new ArrayList<>();
         setCommands();
@@ -28,18 +28,18 @@ public class FileCommandManager implements CommandManager {
      * @throws IOException if the commands file cannot be read or if the named file does not
      *                     exist, is a directory rather than a regular file, or for some other reason cannot be opened for reading.
      */
-    public FileCommandManager(File file) throws IOException {
+    public FileCommandManager(File file) {
         COMMAND_FILE = file.getName();
         setCommands();
     }
 
 
-    private void setCommands() throws IOException {
+    private void setCommands() {
         this.commands = readCommands(COMMAND_FILE);
     }
 
     @Override
-    public List<String> getCommands() throws IOException {
+    public List<String> getCommands() {
         return commands;
     }
 
@@ -50,7 +50,7 @@ public class FileCommandManager implements CommandManager {
      * @param fileName the name of the file to read from
      * @throws IOException if the commands file cannot be read
      */
-    private List<String> readCommands(String fileName) throws IOException {
+    private List<String> readCommands(String fileName) {
 
         try (
                 FileInputStream fileIn = new FileInputStream(fileName);
@@ -65,8 +65,8 @@ public class FileCommandManager implements CommandManager {
             }
         } catch (IOException e) {
             // TODO: make logging
-            System.err.println(e);
-            throw e;
+            System.err.println("Error when trying to read drawing commands from file: " + fileName);
+            e.printStackTrace();
         }
         return commands;
     }
