@@ -4,10 +4,14 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class FileCommandManager implements CommandManager {
+/**
+ * This is a class that helps to read  drawing commands from a file,
+ * keep them in a list and deliver them
+ */
+public class FileCommandManager implements CommandManager<DrawingCommand> {
     private final String CHARSET = "UTF-8";
     private final String COMMAND_FILE;
-    private List<String> commands;
+    private List<DrawingCommand> commands;
 
     /**
      * Creates a new <tt>FileCommandManager</tt>, given the name of the
@@ -33,13 +37,12 @@ public class FileCommandManager implements CommandManager {
         setCommands();
     }
 
-
     private void setCommands() {
         this.commands = readCommands(COMMAND_FILE);
     }
 
     @Override
-    public List<String> getCommands() {
+    public List<DrawingCommand> getCommands() {
         return commands;
     }
 
@@ -50,18 +53,17 @@ public class FileCommandManager implements CommandManager {
      * @param fileName the name of the file to read from
      * @throws IOException if the commands file cannot be read
      */
-    private List<String> readCommands(String fileName) {
-
+    private List<DrawingCommand> readCommands(String fileName) {
         try (
                 FileInputStream fileIn = new FileInputStream(fileName);
                 InputStreamReader inReader = new InputStreamReader(fileIn, CHARSET);
                 BufferedReader reader = new BufferedReader(inReader)
         ) {
-            String command;
-            while ((command = reader.readLine()) != null) {
-                //todo: make check
-                // if (checkCommand(command))
-                commands.add(command);
+            String comStr;
+            while ((comStr = reader.readLine()) != null) {
+                DrawingCommand command = getCommandFromString(comStr);
+                if (command != null)
+                    commands.add(command);
             }
         } catch (IOException e) {
             // TODO: make logging
@@ -78,16 +80,23 @@ public class FileCommandManager implements CommandManager {
      * @param file the <tt>File</tt> to read from
      * @throws IOException if the commands file cannot be read
      */
-    private List<String> readCommands(File file) throws IOException {
+    private List<DrawingCommand> readCommands(File file) {
         return readCommands(file.getName());
     }
 
     /**
-     * Check command for compliance with the command format:<br></br>
-     * <tt><уникальный идентификатор устройства>;<действие>;<относительная координата по оси X>;<относительная координата по оси Y>;<цвет>\n</tt>
+     * Create and give a new drawing command from a string that has the format:<br></br>
+     * <уникальный идентификатор устройства>;<действие>;<относительная координата по оси X>;<относительная координата по оси Y>;<цвет>\n
      */
-    private boolean checkCommand(String command) {
-        return false;
+    private DrawingCommand getCommandFromString(String string) {
+        String[] parts = string.split(";");
+        if (parts.length != 5) return null;
+        else
+            return new DrawingCommand(
+                    parts[0],
+                    parts[1],
+                    Double.valueOf(parts[2]),
+                    Double.valueOf(parts[3]),
+                    Integer.valueOf(parts[4]));
     }
-
 }

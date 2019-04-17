@@ -1,4 +1,5 @@
 import org.junit.Test;
+import util.DrawingCommand;
 import util.FileCommandManager;
 
 import java.io.IOException;
@@ -15,9 +16,9 @@ public class FileCommandManagerTest {
     }
 
     @Test
-    public void readCommandsTest() throws IOException {
-        int commandsSize = 86;
-        ArrayList<String> commands = (ArrayList<String>) commandReader.getCommands();
+    public void getCommandsTest() throws IOException {
+        int commandsSize = 87;
+        ArrayList<DrawingCommand> commands = (ArrayList<DrawingCommand>) commandReader.getCommands();
 
         assertThat(commands)
                 .isNotNull()
