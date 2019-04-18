@@ -3,6 +3,7 @@ package server;
 import util.CommandManager;
 
 import java.io.BufferedOutputStream;
+import java.io.Closeable;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
@@ -37,12 +38,12 @@ public class DrawingCommandServer {
     }
 
 
-    private class DrawingCommandServerThread implements Runnable {
+    public class DrawingCommandServerThread extends Thread implements Closeable {
         private Socket clientSoc;
 
         public DrawingCommandServerThread(Socket clientSoc) {
             this.clientSoc = clientSoc;
-            run();
+            start();
         }
 
 
@@ -54,18 +55,24 @@ public class DrawingCommandServer {
             ) {
                 objOut.writeObject(commandManager.getCommands());
                 objOut.flush();
+                System.out.println("Drawing commands were given to the client");
             } catch (IOException e) {
                 // TODO: 15.04.2019 - add logging
                 System.err.println("Error when trying to send commands to client");
                 e.printStackTrace();
                 try {
                     clientSoc.close();
+                    System.out.println("Drawing server has closed.");
                 } catch (IOException e1) {
                     System.err.println("Error when trying to close client socket");
                     e1.printStackTrace();
                 }
-
             }
+        }
+
+        @Override
+        public void close() throws IOException {
+            clientSoc.close();
         }
     }
 }
